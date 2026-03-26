@@ -1,1 +1,935 @@
-<h1>success</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:     #f6f4f0;
+  --bg2:    #ede9e3;
+  --white:  #ffffff;
+  --border: #e0dbd3;
+  --brd2:   #ccc6bc;
+  --ink:    #1c1916;
+  --ink2:   #58514a;
+  --ink3:   #9b9289;
+  --acc:    #bf4c22;
+  --acc-l:  #fdf1ec;
+  --acc2:   #2a67c0;
+  --acc2-l: #ebf2fd;
+  --grn:    #2a8a5a;
+  --r:      10px;
+  --rsm:    6px;
+  --sh:     0 1px 3px rgba(0,0,0,.07),0 4px 16px rgba(0,0,0,.06);
+  --shlg:   0 8px 32px rgba(0,0,0,.1),0 2px 8px rgba(0,0,0,.06);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+/* CRITICAL: html+body fill viewport, no scroll */
+html,body{height:100%;overflow:hidden}
+
+body{
+  font-family:'Plus Jakarta Sans',sans-serif;
+  background:var(--bg);color:var(--ink);font-size:14px;
+}
+
+/* ── ONE PAGE VISIBLE AT A TIME ── */
+.page{
+  position:fixed;inset:0;
+  overflow-y:auto;
+  background:var(--bg);
+  visibility:hidden;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .2s ease,visibility .2s ease;
+  z-index:1;
+}
+.page.on{
+  visibility:visible;
+  opacity:1;
+  pointer-events:all;
+  z-index:2;
+}
+
+/* ═══════════════════════════════════
+   PORTFOLIO
+═══════════════════════════════════ */
+.pnav{
+  position:sticky;top:0;z-index:40;
+  height:60px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 48px;
+  background:rgba(246,244,240,.92);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+}
+.pbrand{
+  font-family:'Playfair Display',serif;
+  font-size:20px;font-weight:900;letter-spacing:-.02em;color:var(--ink);
+}
+.pbrand em{font-style:italic;color:var(--acc)}
+
+.pill{
+  display:inline-flex;align-items:center;gap:6px;
+  height:34px;padding:0 16px;
+  border-radius:100px;
+  font-size:12px;font-weight:700;
+  cursor:pointer;transition:all .17s;
+  border:1.5px solid var(--brd2);
+  background:var(--white);color:var(--ink2);
+  font-family:'Plus Jakarta Sans',sans-serif;
+  white-space:nowrap;
+}
+.pill:hover{background:var(--ink);color:var(--white);border-color:var(--ink)}
+
+/* Hero */
+.phero{padding:64px 48px 36px;max-width:700px}
+.phero-tag{
+  font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--acc);display:flex;align-items:center;gap:10px;margin-bottom:14px;
+}
+.phero-tag::after{content:'';display:block;width:36px;height:1px;background:var(--acc);opacity:.5}
+.phero h1{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(40px,5.5vw,70px);font-weight:900;
+  line-height:1.05;letter-spacing:-.03em;
+  color:var(--ink);margin-bottom:18px;
+}
+.phero h1 em{font-style:italic;color:var(--acc)}
+.phero p{font-size:16px;color:var(--ink2);line-height:1.75;font-weight:300}
+
+/* Filters */
+.fbar{
+  padding:0 48px 28px;
+  display:flex;flex-wrap:wrap;gap:7px;
+}
+.fchip{
+  height:32px;padding:0 15px;
+  border-radius:100px;
+  font-size:12px;font-weight:600;
+  cursor:pointer;transition:all .15s;
+  border:1.5px solid var(--brd2);
+  background:var(--white);color:var(--ink2);
+  font-family:'Plus Jakarta Sans',sans-serif;
+}
+.fchip:hover{border-color:var(--ink3);color:var(--ink)}
+.fchip.on{background:var(--ink);border-color:var(--ink);color:var(--white)}
+
+/* Masonry */
+.mwrap{padding:0 48px 80px}
+.mason{columns:3;column-gap:18px}
+@media(max-width:1100px){.mason{columns:2}}
+@media(max-width:660px){
+  .mason{columns:1}
+  .pnav,.phero,.fbar,.mwrap{padding-left:18px;padding-right:18px}
+}
+
+/* Card */
+.pcard{
+  break-inside:avoid;margin-bottom:18px;
+  background:var(--white);border-radius:var(--r);
+  border:1px solid var(--border);overflow:hidden;
+  cursor:pointer;
+  transition:transform .22s cubic-bezier(.4,0,.2,1),
+             box-shadow .22s cubic-bezier(.4,0,.2,1),
+             border-color .22s;
+  animation:fuup .4s cubic-bezier(.4,0,.2,1) both;
+}
+@keyframes fuup{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.pcard:hover{transform:translateY(-5px);box-shadow:var(--shlg);border-color:var(--brd2)}
+
+/* Preview */
+.cprev{
+  width:100%;height:210px;
+  position:relative;overflow:hidden;
+  background:var(--bg2);
+}
+
+/* Screenshot scrolling container */
+.cscroll{
+  position:absolute;inset:0;overflow:hidden;
+}
+.cscreen{
+  /* tall element whose top-anchored bg image "scrolls" on hover */
+  position:absolute;
+  top:0;left:0;right:0;
+  height:400%;          /* gives room to translateY */
+  background-size:cover;
+  background-position:top center;
+  background-repeat:no-repeat;
+  transform:translateY(0);
+  transition:transform 7s cubic-bezier(.25,.46,.45,.94);
+  will-change:transform;
+}
+.pcard:hover .cscreen{transform:translateY(-75%)}
+
+/* Placeholder */
+.cph{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:10px;
+  pointer-events:none;
+  transition:opacity .4s;
+}
+.cph-fav{
+  width:38px;height:38px;border-radius:8px;
+  background:var(--white);border:1px solid var(--border);
+  box-shadow:var(--sh);
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+}
+.cph-domain{font-size:13px;font-weight:600;color:var(--ink3)}
+.cph-hint{font-size:11px;color:var(--brd2)}
+
+/* Overlay on hover */
+.covr{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(28,25,22,.5) 0%,transparent 45%);
+  opacity:0;transition:opacity .22s;
+  display:flex;align-items:flex-end;padding:14px;
+}
+.pcard:hover .covr{opacity:1}
+.covr-btn{
+  background:var(--white);color:var(--ink);
+  font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  padding:7px 14px;border-radius:100px;
+  font-family:'Plus Jakarta Sans',sans-serif;
+}
+
+/* Card info */
+.cinfo{
+  padding:13px 15px 15px;
+  border-top:1px solid var(--border);
+}
+.cname{
+  font-family:'Playfair Display',serif;
+  font-size:15px;font-weight:700;color:var(--ink);
+  margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.curl{font-size:11px;color:var(--ink3);margin-bottom:9px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ctags{display:flex;flex-wrap:wrap;gap:5px}
+.ctag{
+  padding:3px 9px;border-radius:4px;
+  font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+}
+
+/* Empty */
+.pempty{
+  text-align:center;padding:70px 40px;
+}
+.pempty-ico{font-size:40px;margin-bottom:14px;opacity:.25}
+.pempty h3{font-family:'Playfair Display',serif;font-size:20px;color:var(--ink2);margin-bottom:6px}
+.pempty p{color:var(--ink3);font-size:13px}
+
+/* ═══════════════════════════════════
+   LOGIN
+═══════════════════════════════════ */
+#login-pg{
+  display:flex;align-items:center;justify-content:center;
+  min-height:100%;padding:20px;
+}
+.lcrd{
+  background:var(--white);border:1px solid var(--border);
+  border-radius:16px;padding:48px 44px;
+  width:100%;max-width:400px;
+  box-shadow:var(--shlg);
+}
+.leyebrow{
+  font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--acc);margin-bottom:12px;
+}
+.ltitle{
+  font-family:'Playfair Display',serif;
+  font-size:28px;font-weight:900;letter-spacing:-.02em;
+  margin-bottom:6px;
+}
+.lsub{font-size:13px;color:var(--ink3);line-height:1.65;margin-bottom:34px}
+
+.fg{margin-bottom:16px}
+.flbl{
+  display:block;font-size:10px;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink2);margin-bottom:7px;
+}
+.finp{
+  width:100%;height:44px;
+  background:var(--bg);border:1.5px solid var(--brd2);border-radius:var(--rsm);
+  padding:0 14px;
+  font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:var(--ink);
+  outline:none;transition:all .18s;
+}
+.finp:focus{border-color:var(--acc);background:var(--white);box-shadow:0 0 0 3px rgba(191,76,34,.1)}
+.finp::placeholder{color:var(--ink3)}
+
+.lerr{
+  background:#fef2f2;border:1px solid #fecaca;border-radius:var(--rsm);
+  padding:10px 14px;font-size:13px;color:#b91c1c;
+  margin-bottom:16px;display:none;
+}
+.lbtn{
+  width:100%;height:46px;
+  background:var(--ink);color:var(--white);
+  border:none;border-radius:var(--rsm);
+  font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:14px;font-weight:700;letter-spacing:.02em;
+  cursor:pointer;transition:all .18s;margin-top:4px;
+}
+.lbtn:hover{background:#2d2924;transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.15)}
+.lback{text-align:center;margin-top:18px}
+.lback a{font-size:13px;color:var(--ink3);text-decoration:none;transition:color .15s}
+.lback a:hover{color:var(--ink)}
+
+/* ═══════════════════════════════════
+   ADMIN
+═══════════════════════════════════ */
+#admin-pg{
+  display:flex;min-height:100%;background:var(--bg);
+}
+
+.aside{
+  width:236px;flex-shrink:0;
+  background:var(--white);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  padding:26px 14px;
+  position:fixed;top:0;left:0;bottom:0;
+  overflow-y:auto;z-index:10;
+}
+.aside-logo{
+  font-family:'Playfair Display',serif;
+  font-size:18px;font-weight:900;letter-spacing:-.02em;
+  padding:0 8px;margin-bottom:3px;
+}
+.aside-logo em{font-style:italic;color:var(--acc)}
+.aside-sub{
+  font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink3);padding:0 8px;margin-bottom:28px;
+}
+.anav{flex:1;display:flex;flex-direction:column;gap:2px}
+.anav-btn{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;border-radius:8px;
+  font-size:13px;font-weight:600;color:var(--ink2);
+  cursor:pointer;transition:all .14s;
+  border:none;background:none;width:100%;text-align:left;
+  font-family:'Plus Jakarta Sans',sans-serif;
+}
+.anav-btn:hover{background:var(--bg);color:var(--ink)}
+.anav-btn.on{background:var(--acc-l);color:var(--acc)}
+.asep{height:1px;background:var(--border);margin:10px 8px}
+.alogout{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;border-radius:8px;
+  font-size:13px;font-weight:500;color:var(--ink3);
+  cursor:pointer;transition:all .14s;
+  border:none;background:none;width:100%;text-align:left;
+  font-family:'Plus Jakarta Sans',sans-serif;
+}
+.alogout:hover{color:#b91c1c;background:#fef2f2}
+
+.amain{flex:1;margin-left:236px;min-height:100%;overflow-y:auto}
+.atopbar{
+  height:60px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 36px;
+  border-bottom:1px solid var(--border);
+  background:rgba(246,244,240,.95);
+  backdrop-filter:blur(10px);
+  position:sticky;top:0;z-index:5;
+}
+.atitle{font-family:'Playfair Display',serif;font-size:20px;font-weight:900;letter-spacing:-.02em}
+
+.asec{display:none}
+.asec.on{display:block}
+.acontent{padding:30px 36px}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px}
+.sbox{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:22px}
+.snum{font-family:'Playfair Display',serif;font-size:40px;font-weight:900;line-height:1;margin-bottom:4px}
+.slbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}
+
+/* Table card */
+.tcard{background:var(--white);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:22px}
+.thead{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.ttitle{font-size:14px;font-weight:700}
+table{width:100%;border-collapse:collapse}
+th{
+  padding:9px 18px;text-align:left;
+  font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink3);background:var(--bg);border-bottom:1px solid var(--border);
+}
+td{padding:12px 18px;border-bottom:1px solid rgba(0,0,0,.04);font-size:13px;color:var(--ink2);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--bg)}
+.tdname{font-weight:700;color:var(--ink);font-size:14px}
+.tdurl{font-size:11px;color:var(--ink3);max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
+.tdact{display:flex;gap:5px}
+
+/* Buttons */
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:0 15px;height:34px;border-radius:var(--rsm);
+  font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:12px;font-weight:700;cursor:pointer;
+  transition:all .15s;border:1.5px solid transparent;
+  letter-spacing:.02em;white-space:nowrap;
+}
+.btn-p{background:var(--ink);color:var(--white);border-color:var(--ink)}
+.btn-p:hover{background:#2d2924;box-shadow:0 4px 12px rgba(0,0,0,.14);transform:translateY(-1px)}
+.btn-g{background:transparent;color:var(--ink2);border-color:var(--brd2)}
+.btn-g:hover{background:var(--bg);border-color:var(--ink3);color:var(--ink)}
+.btn-sm{height:28px;padding:0 11px;font-size:11px}
+.btn-edit{background:var(--acc2-l);color:var(--acc2);border-color:transparent}
+.btn-edit:hover{background:#ddedfb}
+.btn-del{background:#fef2f2;color:#b91c1c;border-color:transparent}
+.btn-del:hover{background:#fee2e2}
+
+/* Modal */
+.mbk{
+  position:fixed;inset:0;background:rgba(28,25,22,.45);backdrop-filter:blur(4px);
+  z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;
+  opacity:0;pointer-events:none;transition:opacity .2s;
+}
+.mbk.on{opacity:1;pointer-events:all}
+.mdl{
+  background:var(--white);border:1px solid var(--border);border-radius:14px;
+  width:100%;max-width:500px;max-height:90vh;overflow-y:auto;
+  transform:translateY(14px) scale(.98);
+  transition:transform .22s cubic-bezier(.4,0,.2,1);
+  box-shadow:0 32px 80px rgba(0,0,0,.16);
+}
+.mbk.on .mdl{transform:none}
+.mhd{
+  padding:20px 22px 16px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.mtitle{font-family:'Playfair Display',serif;font-size:18px;font-weight:900}
+.mx{
+  width:28px;height:28px;border-radius:6px;
+  background:var(--bg);border:1px solid var(--border);
+  color:var(--ink3);font-size:13px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:all .14s;
+}
+.mx:hover{background:var(--border);color:var(--ink)}
+.mbody{padding:22px}
+.mfoot{padding:14px 22px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:9px}
+
+/* Tech picker */
+.tpicker{display:flex;flex-wrap:wrap;gap:6px;padding-top:6px}
+.tpbtn{
+  padding:5px 12px;border-radius:100px;
+  font-size:11px;font-weight:700;
+  cursor:pointer;transition:all .14s;
+  border:1.5px solid var(--brd2);
+  background:var(--bg);color:var(--ink2);
+  font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:.03em;
+}
+
+/* Tech grid */
+.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:9px;margin-bottom:22px}
+.titem{
+  background:var(--white);border:1px solid var(--border);
+  border-radius:var(--rsm);padding:11px 13px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.tiname{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--ink)}
+.tdot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.tdelbtn{background:none;border:none;color:var(--ink3);font-size:13px;cursor:pointer;transition:color .14s;padding:2px;line-height:1}
+.tdelbtn:hover{color:#b91c1c}
+.addrow{display:flex;gap:9px;align-items:flex-end}
+.clrinput{
+  width:44px;height:44px;border-radius:var(--rsm);
+  border:1.5px solid var(--brd2);background:var(--bg);cursor:pointer;padding:3px;
+}
+.clrinput::-webkit-color-swatch-wrapper{padding:0}
+.clrinput::-webkit-color-swatch{border:none;border-radius:4px}
+
+/* Toast */
+.toast{
+  position:fixed;bottom:22px;right:22px;
+  background:var(--ink);color:var(--white);
+  border-radius:var(--rsm);padding:11px 16px;
+  font-size:13px;font-weight:500;z-index:9999;
+  transform:translateY(14px);opacity:0;
+  transition:all .24s;display:flex;align-items:center;gap:7px;
+  box-shadow:var(--shlg);max-width:280px;
+}
+.toast.sh{transform:translateY(0);opacity:1}
+.toast.ok{background:#166534}
+.toast.er{background:#991b1b}
+
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--brd2);border-radius:10px}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════
+     PORTFOLIO PAGE
+═══════════════════════════════════ -->
+<div id="port-pg" class="page on">
+  <nav class="pnav">
+    <div class="pbrand">Port<em>folio</em></div>
+    <button class="pill" onclick="goLogin()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Admin
+    </button>
+  </nav>
+
+  <div class="phero">
+    <div class="phero-tag">Selected Works</div>
+    <h1>Creative<br><em>Projects</em></h1>
+    <p>A curated showcase of web projects — crafted with modern technologies.</p>
+  </div>
+
+  <div class="fbar" id="fbar">
+    <button class="fchip on" data-fid="all" onclick="setF('all')">All</button>
+  </div>
+
+  <div class="mwrap">
+    <div class="mason" id="mason"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     LOGIN PAGE
+═══════════════════════════════════ -->
+<div id="login-pg" class="page">
+  <div style="display:flex;align-items:center;justify-content:center;min-height:100%;padding:20px">
+    <div class="lcrd">
+      <div class="leyebrow">Admin Access</div>
+      <div class="ltitle">Welcome back</div>
+      <div class="lsub">Sign in to manage your portfolio sites and technologies.</div>
+      <div class="lerr" id="lerr">Incorrect username or password.</div>
+      <div class="fg">
+        <label class="flbl">Username</label>
+        <input class="finp" type="text" id="lu" placeholder="admin" autocomplete="username">
+      </div>
+      <div class="fg">
+        <label class="flbl">Password</label>
+        <input class="finp" type="password" id="lp" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <button class="lbtn" onclick="doLogin()">Sign In →</button>
+      <div class="lback"><a href="#" onclick="showPg('port-pg');return false">← Back to Portfolio</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     ADMIN PAGE
+═══════════════════════════════════ -->
+<div id="admin-pg" class="page">
+  <div style="display:flex;min-height:100%">
+
+    <aside class="aside">
+      <div class="aside-logo">Port<em>folio</em></div>
+      <div class="aside-sub">Admin Panel</div>
+      <nav class="anav">
+        <button class="anav-btn on" onclick="showSec('dash')" data-s="dash">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          Dashboard
+        </button>
+        <button class="anav-btn" onclick="showSec('sites')" data-s="sites">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3.6 9h16.8M3.6 15h16.8M12 3a15.3 15.3 0 0 1 0 18M12 3a15.3 15.3 0 0 0 0 18"/></svg>
+          Sites
+        </button>
+        <button class="anav-btn" onclick="showSec('techs')" data-s="techs">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          Technologies
+        </button>
+        <div class="asep"></div>
+        <button class="anav-btn" onclick="showPg('port-pg')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          View Portfolio
+        </button>
+      </nav>
+      <button class="alogout" onclick="doLogout()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign Out
+      </button>
+    </aside>
+
+    <div class="amain">
+      <div class="atopbar">
+        <div class="atitle" id="atitle">Dashboard</div>
+        <div id="atopact"></div>
+      </div>
+
+      <!-- DASHBOARD -->
+      <div class="asec on acontent" id="sec-dash">
+        <div class="stats">
+          <div class="sbox"><div class="snum" id="sn-sites" style="color:var(--acc)">0</div><div class="slbl">Total Sites</div></div>
+          <div class="sbox"><div class="snum" id="sn-techs" style="color:var(--acc2)">0</div><div class="slbl">Technologies</div></div>
+          <div class="sbox"><div class="snum" id="sn-tags" style="color:var(--grn)">0</div><div class="slbl">Tag Links</div></div>
+        </div>
+        <div class="tcard">
+          <div class="thead">
+            <div class="ttitle">Recent Sites</div>
+            <button class="btn btn-p" onclick="showSec('sites');openMdl()">+ Add Site</button>
+          </div>
+          <table><thead><tr><th>Name</th><th>URL</th><th>Technologies</th></tr></thead>
+          <tbody id="dtbody"></tbody></table>
+        </div>
+      </div>
+
+      <!-- SITES -->
+      <div class="asec acontent" id="sec-sites">
+        <div class="tcard">
+          <div class="thead">
+            <div class="ttitle">All Sites</div>
+            <button class="btn btn-p" onclick="openMdl()">+ Add Site</button>
+          </div>
+          <table><thead><tr><th>Name</th><th>URL</th><th>Technologies</th><th>Actions</th></tr></thead>
+          <tbody id="stbody"></tbody></table>
+        </div>
+      </div>
+
+      <!-- TECHS -->
+      <div class="asec acontent" id="sec-techs">
+        <div class="tgrid" id="tgrid"></div>
+        <div class="tcard" style="padding:22px">
+          <div class="ttitle" style="margin-bottom:18px">Add Technology</div>
+          <div class="addrow">
+            <div class="fg" style="margin:0;flex:1">
+              <label class="flbl">Name</label>
+              <input class="finp" type="text" id="ntname" placeholder="React, Vue, Laravel…">
+            </div>
+            <div class="fg" style="margin:0">
+              <label class="flbl">Color</label>
+              <input class="clrinput" type="color" id="ntcolor" value="#bf4c22">
+            </div>
+            <button class="btn btn-p" style="height:44px;margin-top:19px" onclick="addTech()">Add</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     SITE MODAL
+═══════════════════════════════════ -->
+<div class="mbk" id="smdl">
+  <div class="mdl">
+    <div class="mhd">
+      <div class="mtitle" id="mdl-title">Add Site</div>
+      <button class="mx" onclick="closeMdl()">✕</button>
+    </div>
+    <div class="mbody">
+      <input type="hidden" id="eid">
+      <div class="fg">
+        <label class="flbl">Site Name *</label>
+        <input class="finp" type="text" id="mname" placeholder="My Awesome Project">
+      </div>
+      <div class="fg">
+        <label class="flbl">Site URL *</label>
+        <input class="finp" type="url" id="murl" placeholder="https://example.com">
+      </div>
+      <div class="fg">
+        <label class="flbl">Technologies</label>
+        <div class="tpicker" id="tpicker"></div>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-g" onclick="closeMdl()">Cancel</button>
+      <button class="btn btn-p" onclick="saveSite()">Save Site</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ─── CREDENTIALS ─── */
+const AU='admin', AP='portfolio2024';
+
+/* ─── DB ─── */
+function db(){
+  const raw=localStorage.getItem('pf2');
+  if(raw) return JSON.parse(raw);
+  return{
+    techs:[
+      {id:'t1',name:'React',     color:'#61dafb'},
+      {id:'t2',name:'Vue',       color:'#42b883'},
+      {id:'t3',name:'Laravel',   color:'#ff2d20'},
+      {id:'t4',name:'Next.js',   color:'#1a1a1a'},
+      {id:'t5',name:'Tailwind',  color:'#38bdf8'},
+      {id:'t6',name:'Node.js',   color:'#68a063'},
+      {id:'t7',name:'TypeScript',color:'#3178c6'},
+      {id:'t8',name:'WordPress', color:'#21759b'},
+    ],
+    sites:[
+      {id:'s1',name:'Vercel',      url:'https://vercel.com',      techs:['t1','t4','t5']},
+      {id:'s2',name:'Tailwind CSS',url:'https://tailwindcss.com', techs:['t5','t7']},
+      {id:'s3',name:'Vue.js Docs', url:'https://vuejs.org',       techs:['t2','t7']},
+      {id:'s4',name:'Laravel',     url:'https://laravel.com',     techs:['t3','t6']},
+    ],
+    session:false
+  };
+}
+function sv(d){localStorage.setItem('pf2',JSON.stringify(d))}
+function init(){if(!localStorage.getItem('pf2')){const d=db();sv(d)}}
+
+/* ─── PAGE NAV ─── */
+function showPg(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  if(id==='port-pg') renderPort();
+}
+function goLogin(){
+  document.getElementById('lerr').style.display='none';
+  document.getElementById('lu').value='';
+  document.getElementById('lp').value='';
+  showPg('login-pg');
+}
+function doLogin(){
+  const u=document.getElementById('lu').value.trim();
+  const p=document.getElementById('lp').value;
+  if(u===AU&&p===AP){
+    const d=db();d.session=true;sv(d);
+    document.getElementById('lerr').style.display='none';
+    showPg('admin-pg');
+    showSec('dash');
+  } else {
+    document.getElementById('lerr').style.display='block';
+    document.getElementById('lp').value='';
+  }
+}
+function doLogout(){const d=db();d.session=false;sv(d);showPg('port-pg')}
+
+document.getElementById('lp').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+document.getElementById('lu').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('lp').focus()});
+
+/* ─── ADMIN SECTIONS ─── */
+function showSec(s){
+  document.querySelectorAll('.asec').forEach(x=>x.classList.remove('on'));
+  document.querySelectorAll('.anav-btn[data-s]').forEach(x=>x.classList.remove('on'));
+  document.getElementById('sec-'+s).classList.add('on');
+  const nb=document.querySelector('.anav-btn[data-s="'+s+'"]');
+  if(nb) nb.classList.add('on');
+  ({dash:'Dashboard',sites:'Manage Sites',techs:'Manage Technologies'});
+  document.getElementById('atitle').textContent={dash:'Dashboard',sites:'Manage Sites',techs:'Manage Technologies'}[s]||s;
+  renderSec(s);
+}
+
+function renderSec(s){
+  const d=db();
+  if(s==='dash'){
+    document.getElementById('sn-sites').textContent=d.sites.length;
+    document.getElementById('sn-techs').textContent=d.techs.length;
+    document.getElementById('sn-tags').textContent=d.sites.reduce((a,x)=>a+(x.techs||[]).length,0);
+    document.getElementById('dtbody').innerHTML=d.sites.slice(-5).reverse().map(s=>`
+      <tr><td class="tdname">${x(s.name)}</td>
+      <td><span class="tdurl">${x(s.url)}</span></td>
+      <td>${thtml(s.techs||[],d.techs)}</td></tr>`).join('')||erow(3);
+  } else if(s==='sites'){
+    document.getElementById('stbody').innerHTML=d.sites.map(s=>`
+      <tr><td class="tdname">${x(s.name)}</td>
+      <td><span class="tdurl" title="${x(s.url)}">${x(s.url)}</span></td>
+      <td>${thtml(s.techs||[],d.techs)}</td>
+      <td><div class="tdact">
+        <button class="btn btn-sm btn-edit" onclick="openMdl('${s.id}')">Edit</button>
+        <button class="btn btn-sm btn-del" onclick="delSite('${s.id}')">Delete</button>
+      </div></td></tr>`).join('')||erow(4);
+  } else if(s==='techs'){
+    const g=document.getElementById('tgrid');
+    g.innerHTML=d.techs.map(t=>`
+      <div class="titem">
+        <div class="tiname"><div class="tdot" style="background:${t.color}"></div>${x(t.name)}</div>
+        <button class="tdelbtn" onclick="delTech('${t.id}')">✕</button>
+      </div>`).join('')||'<div style="color:var(--ink3);font-size:13px">No technologies yet.</div>';
+  }
+}
+
+function erow(c){return`<tr><td colspan="${c}" style="text-align:center;color:var(--ink3);padding:28px">Nothing here yet.</td></tr>`}
+function thtml(ids,all){return ids.map(id=>{const t=all.find(x=>x.id===id);return t?`<span class="ctag" style="background:${ha(t.color,.11)};color:${t.color}">${x(t.name)}</span>`:''}).join(' ')}
+
+/* ─── MODAL ─── */
+function openMdl(sid){
+  const d=db();
+  const site=sid?d.sites.find(s=>s.id===sid):null;
+  document.getElementById('mdl-title').textContent=site?'Edit Site':'Add Site';
+  document.getElementById('eid').value=sid||'';
+  document.getElementById('mname').value=site?site.name:'';
+  document.getElementById('murl').value=site?site.url:'';
+  const sel=site?(site.techs||[]):[];
+  const picker=document.getElementById('tpicker');
+  picker.innerHTML=d.techs.length
+    ?d.techs.map(t=>`
+      <button class="tpbtn ${sel.includes(t.id)?'picked':''}" data-tid="${t.id}"
+        style="color:${t.color};${sel.includes(t.id)?`background:${ha(t.color,.1)};border-color:${t.color}`:''}"
+        onclick="togPick(this,'${t.color}')">${x(t.name)}</button>`).join('')
+    :`<span style="color:var(--ink3);font-size:13px">Add technologies first.</span>`;
+  document.getElementById('smdl').classList.add('on');
+}
+
+function togPick(btn,color){
+  btn.classList.toggle('picked');
+  if(btn.classList.contains('picked')){btn.style.background=ha(color,.1);btn.style.borderColor=color;}
+  else{btn.style.background='var(--bg)';btn.style.borderColor='var(--brd2)';}
+}
+
+function saveSite(){
+  const name=document.getElementById('mname').value.trim();
+  const url=document.getElementById('murl').value.trim();
+  const id=document.getElementById('eid').value;
+  if(!name){toast('er','Enter a site name.');return}
+  if(!url){toast('er','Enter a URL.');return}
+  if(!/^https?:\/\//i.test(url)){toast('er','URL must start with https://');return}
+  const sel=[...document.querySelectorAll('.tpbtn.picked')].map(b=>b.dataset.tid);
+  const d=db();
+  if(id){const i=d.sites.findIndex(s=>s.id===id);if(i>-1)d.sites[i]={id,name,url,techs:sel}}
+  else d.sites.push({id:'s'+Date.now(),name,url,techs:sel});
+  sv(d);closeMdl();renderSec('sites');renderSec('dash');toast('ok',`"${name}" saved.`);
+}
+
+function delSite(id){
+  if(!confirm('Delete this site?'))return;
+  const d=db();d.sites=d.sites.filter(s=>s.id!==id);sv(d);
+  renderSec('sites');renderSec('dash');toast('ok','Site deleted.');
+}
+
+function closeMdl(){document.getElementById('smdl').classList.remove('on')}
+document.getElementById('smdl').addEventListener('click',function(e){if(e.target===this)closeMdl()});
+
+/* ─── TECHNOLOGIES ─── */
+function addTech(){
+  const name=document.getElementById('ntname').value.trim();
+  const color=document.getElementById('ntcolor').value;
+  if(!name){toast('er','Enter a name.');return}
+  const d=db();
+  if(d.techs.find(t=>t.name.toLowerCase()===name.toLowerCase())){toast('er','Already exists.');return}
+  d.techs.push({id:'t'+Date.now(),name,color});sv(d);
+  document.getElementById('ntname').value='';
+  renderSec('techs');renderSec('dash');toast('ok',`"${name}" added.`);
+}
+document.getElementById('ntname').addEventListener('keydown',e=>{if(e.key==='Enter')addTech()});
+
+function delTech(id){
+  if(!confirm('Delete technology? It will be removed from all sites.'))return;
+  const d=db();
+  d.techs=d.techs.filter(t=>t.id!==id);
+  d.sites=d.sites.map(s=>({...s,techs:(s.techs||[]).filter(tid=>tid!==id)}));
+  sv(d);renderSec('techs');renderSec('dash');toast('ok','Deleted.');
+}
+
+/* ─── PORTFOLIO ─── */
+let AF='all';
+
+function renderPort(){
+  const d=db();
+  renderFilters(d.sites,d.techs);
+  renderCards(d.sites,d.techs,AF);
+}
+
+function renderFilters(sites,techs){
+  const used=new Set(sites.flatMap(s=>s.techs||[]));
+  const bar=document.getElementById('fbar');
+  bar.innerHTML=`<button class="fchip ${AF==='all'?'on':''}" data-fid="all" onclick="setF('all')">All</button>`;
+  techs.filter(t=>used.has(t.id)).forEach(t=>{
+    const on=AF===t.id;
+    bar.innerHTML+=`<button class="fchip ${on?'on':''}" data-fid="${t.id}"
+      style="${on?`background:${t.color};border-color:${t.color};color:#fff`:''}"
+      onclick="setF('${t.id}','${t.color}')">${x(t.name)}</button>`;
+  });
+}
+
+function setF(fid){
+  AF=fid;
+  const d=db();
+  renderFilters(d.sites,d.techs);
+  renderCards(d.sites,d.techs,fid);
+}
+
+function renderCards(sites,techs,fid){
+  const mason=document.getElementById('mason');
+  const list=fid==='all'?sites:sites.filter(s=>(s.techs||[]).includes(fid));
+  if(!list.length){
+    mason.innerHTML=`<div class="pempty">
+      <div class="pempty-ico">◌</div>
+      <h3>${sites.length===0?'No projects yet':'No matches'}</h3>
+      <p>${sites.length===0?'Add sites via the admin panel.':'Try a different filter.'}</p>
+    </div>`;return;
+  }
+  mason.innerHTML=list.map((site,i)=>{
+    const st=(site.techs||[]).map(id=>techs.find(t=>t.id===id)).filter(Boolean);
+    const domain=getDomain(site.url);
+    return`<div class="pcard" style="animation-delay:${(i%6)*50}ms" onclick="window.open('${x(site.url)}','_blank','noopener')">
+      <div class="cprev">
+        <div class="cscroll">
+          <div class="cscreen" id="cs-${site.id}" style="${bgStyle(site.url)}"></div>
+        </div>
+        <div class="cph" id="cph-${site.id}">
+          <div class="cph-fav">
+            <img src="https://www.google.com/s2/favicons?domain=${domain}&sz=32"
+                 onerror="this.style.display='none';this.parentNode.innerHTML='🌐'"
+                 width="24" height="24" style="border-radius:3px">
+          </div>
+          <div class="cph-domain">${x(domain)}</div>
+          <div class="cph-hint" id="hint-${site.id}">Loading preview…</div>
+        </div>
+        <div class="covr"><div class="covr-btn">Visit Site ↗</div></div>
+      </div>
+      <div class="cinfo">
+        <div class="cname">${x(site.name)}</div>
+        <div class="curl">${x(domain)}</div>
+        <div class="ctags">${st.map(t=>`<span class="ctag" style="background:${ha(t.color,.12)};color:${t.color}">${x(t.name)}</span>`).join('')}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  list.forEach(s=>loadShot(s));
+}
+
+/* Screenshot via Microlink free API */
+function loadShot(site){
+  const cs=document.getElementById('cs-'+site.id);
+  const ph=document.getElementById('cph-'+site.id);
+  const ht=document.getElementById('hint-'+site.id);
+  if(!cs) return;
+  const api=`https://api.microlink.io/?url=${encodeURIComponent(site.url)}&screenshot=true&meta=false&embed=screenshot.url`;
+  fetch(api).then(r=>r.json()).then(data=>{
+    const src=data?.data?.screenshot?.url;
+    if(src){
+      const img=new Image();
+      img.onload=()=>{
+        if(cs){cs.style.background=`url(${src}) top center / cover no-repeat`;cs.style.backgroundSize='cover';}
+        if(ph){ph.style.opacity='0';ph.style.pointerEvents='none';}
+      };
+      img.src=src;
+    } else {
+      if(ht) ht.textContent='Preview unavailable';
+    }
+  }).catch(()=>{if(ht) ht.textContent='Preview unavailable';});
+}
+
+/* Unique gradient per URL as background until screenshot loads */
+function bgStyle(url){
+  let h=0;for(let i=0;i<url.length;i++)h=((h<<5)-h)+url.charCodeAt(i);
+  const h1=Math.abs(h)%360,h2=(h1+50)%360;
+  return`background:linear-gradient(145deg,hsl(${h1},40%,90%) 0%,hsl(${h2},30%,83%) 100%)`;
+}
+
+/* ─── UTILS ─── */
+function getDomain(url){try{return new URL(url).hostname.replace('www.','')}catch{return url}}
+function x(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function ha(hex,a){
+  hex=hex.replace('#','');if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');
+  const r=parseInt(hex.slice(0,2),16),g=parseInt(hex.slice(2,4),16),b=parseInt(hex.slice(4,6),16);
+  return`rgba(${r},${g},${b},${a})`;
+}
+let tt;
+function toast(type,msg){
+  const el=document.getElementById('toast');el.textContent=msg;el.className=`toast sh ${type}`;
+  clearTimeout(tt);tt=setTimeout(()=>el.classList.remove('sh'),3000);
+}
+
+/* ─── INIT ─── */
+init();
+renderPort();
+</script>
+</body>
+</html>
